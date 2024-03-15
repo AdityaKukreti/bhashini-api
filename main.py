@@ -7,7 +7,12 @@ bhashiniApi = Bhashini()
 
 @app.route('/')
 def initialRoute():
-    return "<p>call the <b>/config</b> route to get the service ids and model ids</p>"
+    return """<p>call the <b>/config</b> route to get the service ids and model ids</p>
+    <p>call the <b>/speechTranslation</b> route to get the speech translation from source to target language</p>
+    <p>call the <b>/speechToText</b> route to get the audio transcription</p>
+    <p>call the <b>/textTranslation</b> route to get the translation of text from source to target language</p>
+    <p>call the <b>/textToSpeech</b> route to get the audio of the text</p>
+    """
 
 @app.route('/config', methods = ['POST'])
 def getConfig():
