@@ -10,128 +10,211 @@ def initialRoute():
     return """<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Endpoints</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        h1 {
-            font-size: 28px;
-            color: #333;
-            margin-bottom: 20px;
-        }
-        h2 {
-            font-size: 24px;
-            color: #555;
-            margin-top: 30px;
-            margin-bottom: 10px;
-        }
-        p, ul {
-            font-size: 16px;
-            color: #666;
-        }
-        ul {
-            margin-left: 20px;
-            list-style-type: disc;
-        }
-        li {
-            margin-bottom: 5px;
-        }
-        b {
-            font-weight: bold;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API Endpoints</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    color: #333;
+    background-color: #f7f7f7;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.endpoint {
+    margin-bottom: 40px;
+    padding: 20px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.endpoint h2 {
+    color: #007bff;
+    margin-top: 0;
+}
+
+.endpoint p {
+    margin-bottom: 10px;
+}
+
+.endpoint pre {
+    background-color: #f4f4f4;
+    padding: 10px;
+    border-radius: 5px;
+    overflow-x: auto;
+}
+
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1>API Endpoints</h1>
-        <p>Below are the available endpoints:</p>
-        
-        <h2>/config</h2>
-        <p><b>Method:</b> POST</p>
-        <p><b>Arguments:</b></p>
-        <ul>
-            <li>sourceLanguage (string)</li>
-            <li>targetLanguage (string)</li>
-        </ul>
 
-        <h2>/speechTranslation</h2>
-        <p><b>Method:</b> POST</p>
-        <p><b>Arguments:</b></p>
-        <ul>
-            <li>sourceLanguage (string)</li>
-            <li>targetLanguage (string)</li>
-            <li>asrServiceId (string)</li>
-            <li>nmtServiceId (string)</li>
-            <li>ttsServiceId (string)</li>
-            <li>payload (string)</li>
-            <li>computeCallAuthName (string)</li>
-            <li>computeCallAuthValue (string)</li>
-            <li>callbackURL (string)</li>
-        </ul>
-
-        <h2>/speechToText</h2>
-        <p><b>Method:</b> POST</p>
-        <p><b>Arguments:</b></p>
-        <ul>
-            <li>sourceLanguage (string)</li>
-            <li>asrServiceId (string)</li>
-            <li>payload (string)</li>
-            <li>computeCallAuthName (string)</li>
-            <li>computeCallAuthValue (string)</li>
-            <li>callbackURL (string)</li>
-        </ul>
-
-        <h2>/textTranslation</h2>
-        <p><b>Method:</b> POST</p>
-        <p><b>Arguments:</b></p>
-        <ul>
-            <li>sourceLanguage (string)</li>
-            <li>targetLanguage (string)</li>
-            <li>nmtServiceId (string)</li>
-            <li>text (string)</li>
-            <li>computeCallAuthName (string)</li>
-            <li>computeCallAuthValue (string)</li>
-            <li>callbackURL (string)</li>
-        </ul>
-
-        <h2>/textToSpeech</h2>
-        <p><b>Method:</b> POST</p>
-        <p><b>Arguments:</b></p>
-        <ul>
-            <li>targetLanguage (string)</li>
-            <li>ttsServiceId (string)</li>
-            <li>text (string)</li>
-            <li>computeCallAuthName (string)</li>
-            <li>computeCallAuthValue (string)</li>
-            <li>callbackURL (string)</li>
-        </ul>
-
-        <h2>/getTranslations</h2>
-        <p><b>Method:</b> POST</p>
-        <p><b>Arguments:</b></p>
-        <ul>
-            <li>sourceLanguage (string)</li>
-            <li>targetLanguage (string)</li>
-            <li>sourceAudio (string)</li>
-            <li>targetAudio (string)</li>
-        </ul>
+<div class="container">
+    <div class="endpoint">
+        <h2>/</h2>
+        <p><strong>Description:</strong> Home Route</p>
+        <p>Returns a brief description of all available routes.</p>
     </div>
+
+    <div class="endpoint">
+        <h2>/config</h2>
+        <p><strong>Method:</strong> POST</p>
+        <p><strong>Description:</strong> Get the service IDs and model IDs.</p>
+        <p><strong>JSON Data:</strong></p>
+        <pre>
+{
+  "sourceLanguage": "string",
+  "targetLanguage": "string"
+}
+        </pre>
+        <p><strong>Returns:</strong></p>
+        <pre>
+{
+  "response": {
+    "data": "string"
+  }
+}
+        </pre>
+    </div>
+
+    <div class="endpoint">
+        <h2>/speechTranslation</h2>
+        <p><strong>Method:</strong> POST</p>
+        <p><strong>Description:</strong> Get speech translation from source to target language.</p>
+        <p><strong>JSON Data:</strong></p>
+        <pre>
+{
+  "sourceLanguage": "string",
+  "targetLanguage": "string",
+  "asrServiceId": "string",
+  "nmtServiceId": "string",
+  "ttsServiceId": "string",
+  "payload": "string",
+  "computeCallAuthName": "string",
+  "computeCallAuthValue": "string",
+  "callbackURL": "string"
+}
+        </pre>
+        <p><strong>Returns:</strong></p>
+        <pre>
+{
+  "translatedAudio": "string"
+}
+        </pre>
+    </div>
+
+    <div class="endpoint">
+        <h2>/speechToText</h2>
+        <p><strong>Method:</strong> POST</p>
+        <p><strong>Description:</strong> Get audio transcription.</p>
+        <p><strong>JSON Data:</strong></p>
+        <pre>
+{
+  "sourceLanguage": "string",
+  "asrServiceId": "string",
+  "payload": "string",
+  "computeCallAuthName": "string",
+  "computeCallAuthValue": "string",
+  "callbackURL": "string"
+}
+        </pre>
+        <p><strong>Returns:</strong></p>
+        <pre>
+{
+  "response": {
+    "data": "string"
+  }
+}
+        </pre>
+    </div>
+
+    <div class="endpoint">
+        <h2>/textTranslation</h2>
+        <p><strong>Method:</strong> POST</p>
+        <p><strong>Description:</strong> Get translation of text from source to target language.</p>
+        <p><strong>JSON Data:</strong></p>
+        <pre>
+{
+  "sourceLanguage": "string",
+  "targetLanguage": "string",
+  "nmtServiceId": "string",
+  "text": "string",
+  "computeCallAuthName": "string",
+  "computeCallAuthValue": "string",
+  "callbackURL": "string"
+}
+        </pre>
+        <p><strong>Returns:</strong></p>
+        <pre>
+{
+  "response": {
+    "data": "string"
+  }
+}
+        </pre>
+    </div>
+
+    <div class="endpoint">
+        <h2>/textToSpeech</h2>
+        <p><strong>Method:</strong> POST</p>
+        <p><strong>Description:</strong> Get audio of the text.</p>
+        <p><strong>JSON Data:</strong></p>
+        <pre>
+{
+  "targetLanguage": "string",
+  "ttsServiceId": "string",
+  "text": "string",
+  "computeCallAuthName": "string",
+  "computeCallAuthValue": "string",
+  "callbackURL": "string"
+}
+        </pre>
+        <p><strong>Returns:</strong></p>
+        <pre>
+{
+  "response": {
+    "data": "string"
+  }
+}
+        </pre>
+    </div>
+
+    <div class="endpoint">
+        <h2>/getTranslations</h2>
+        <p><strong>Method:</strong> POST</p>
+        <p><strong>Description:</strong> Get translation of audio from source to target language.</p>
+        <p><strong>JSON Data:</strong></p>
+        <pre>
+{
+  "sourceLanguage": "string",
+  "targetLanguage": "string",
+  "sourceAudio": "string",
+  "targetAudio": "string"
+}
+        </pre>
+        <p><strong>Returns:</strong></p>
+        <pre>
+{
+  "response": {
+    "data": "string"
+  }
+}
+        </pre>
+    </div>
+</div>
+
 </body>
 </html>
-
-
-    """
+"""
 
 @app.route('/config', methods = ['POST'])
 def getConfig():
