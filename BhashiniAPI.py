@@ -138,3 +138,37 @@ class Bhashini:
 
         response = requests.post(callbackUrl,headers=header,json=body)
         return response.json()
+    
+    def audioToAudioTranslation(self,sourceLanguage,targetLanguage,sourceAudio,targetAudio):
+        print(f"Source Language: {sourceLanguage}")
+        print(f"Target Language: {targetLanguage}")
+        if (sourceAudio != ""):
+            configData = self.sendHeaderWithConfig(sourceLanguage,targetLanguage)
+            configs = {'asr':configData['pipelineResponseConfig'][0]['config'][0],'translation':configData['pipelineResponseConfig'][1]['config'][0],'tts':configData['pipelineResponseConfig'][2]['config'][0]}
+            pipelineInferenceAPIEndPoint = configData['pipelineInferenceAPIEndPoint']
+        
+            callbackUrl = pipelineInferenceAPIEndPoint['callbackUrl']
+            inferenceApiKey = pipelineInferenceAPIEndPoint['inferenceApiKey']
+            speechToText = self.speechToText(sourceLanguage,configs["asr"]['serviceId'],sourceAudio,inferenceApiKey['name'],inferenceApiKey['value'],callbackUrl)
+            textTranslation = self.textTranslation(callbackUrl,configs['translation']['serviceId'],sourceLanguage,targetLanguage,speechToText['pipelineResponse'][0]['output'][0]['source'],inferenceApiKey['name'],inferenceApiKey['value'])
+            textToSpeech = self.textToSpeech(callbackUrl,configs['tts']['serviceId'],textTranslation['pipelineResponse'][0]['output'][0]['target'],targetLanguage,inferenceApiKey['name'],inferenceApiKey['value'])
+            # response = {'sourceLanguage':sourceLanguage,'targetLanguage':targetLanguage, 'sourceAudio':sourceAudio,'targetAudio':textToSpeech['pipelineResponse'][0]['audio'][0]['audioContent'],'sourceText':speechToText['pipelineResponse'][0]['output'][0]['source'],'targetText':textTranslation['pipelineResponse'][0]['output'][0]['target']}
+            response = {'P1':{'text':speechToText['pipelineResponse'][0]['output'][0]['source'],'audio':sourceAudio,'emotion':'','intent':''},'P2':{'text':textTranslation['pipelineResponse'][0]['output'][0]['target'],'audio':textToSpeech['pipelineResponse'][0]['audio'][0]['audioContent'],'emotion':'','intent':''},'LM':0}
+            print(f"Source Text: {response['P1']['text']}")
+            print(f"Target Text: {response['P2']['text']}")
+            return response
+        
+        configData = self.sendHeaderWithConfig(sourceLanguage,targetLanguage)
+        configs = {'asr':configData['pipelineResponseConfig'][0]['config'][0],'translation':configData['pipelineResponseConfig'][1]['config'][0],'tts':configData['pipelineResponseConfig'][2]['config'][0]}
+        pipelineInferenceAPIEndPoint = configData['pipelineInferenceAPIEndPoint']
+        callbackUrl = pipelineInferenceAPIEndPoint['callbackUrl']
+        inferenceApiKey = pipelineInferenceAPIEndPoint['inferenceApiKey']
+
+        speechToText = self.speechToText(sourceLanguage,configs["asr"]['serviceId'],targetAudio,inferenceApiKey['name'],inferenceApiKey['value'],callbackUrl)
+        textTranslation = self.textTranslation(callbackUrl,configs['translation']['serviceId'],sourceLanguage,targetLanguage,speechToText['pipelineResponse'][0]['output'][0]['source'],inferenceApiKey['name'],inferenceApiKey['value'])
+        textToSpeech = self.textToSpeech(callbackUrl,configs['tts']['serviceId'],textTranslation['pipelineResponse'][0]['output'][0]['target'],targetLanguage,inferenceApiKey['name'],inferenceApiKey['value'])
+        # response = {'sourceLanguage':sourceLanguage,'targetLanguage':targetLanguage, 'sourceAudio':sourceAudio,'targetAudio':textToSpeech['pipelineResponse'][0]['audio'][0]['audioContent'],'sourceText':speechToText['pipelineResponse'][0]['output'][0]['source'],'targetText':textTranslation['pipelineResponse'][0]['output'][0]['target']}
+        # response = {'P1':{'text':speechToText['pipelineResponse'][0]['output'][0]['source'],'audio':sourceAudio,'emotion':'','intent':''},'P2':{'text':textTranslation['pipelineResponse'][0]['output'][0]['target'],'audio':textToSpeech['pipelineResponse'][0]['audio'][0]['audioContent'],'emotion':'','intent':''},'LM':0}
+        response = {'P1':{'text':textTranslation['pipelineResponse'][0]['output'][0]['target'],'audio':textToSpeech['pipelineResponse'][0]['audio'][0]['audioContent'],'emotion':'','intent':''},'P2':{'text':speechToText['pipelineResponse'][0]['output'][0]['source'],'audio':targetAudio,'emotion':'','intent':''},'LM':0}
+        return response
+
