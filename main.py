@@ -78,9 +78,17 @@ def textToSpeech():
     return jsonify({'respnse':bhashiniApi.textToSpeech(callbackURL,ttsServiceId,text,targetLanguage,computeCallAuthName,computeCallAuthValue)})
 
 
+@app.route('/getTranslations', methods = ['POST'])
+def getTranslation():
+    data = request.get_json()
+    sourceLanguage = data['sourceLanguage']
+    targetLanguage = data['targetLanguage']
+    sourceAudio= data['sourceAudio']
+    targetAudio = data['sourceAudio']
+    return jsonify({'response':bhashiniApi.audioToAudioTranslation(sourceLanguage,targetLanguage,sourceAudio,targetAudio)})
+    
    
 
 
 if (__name__ == '__main__'):
     app.run(host = "0.0.0.0", port = 10000)
-
