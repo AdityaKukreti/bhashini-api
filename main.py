@@ -8,87 +8,121 @@ bhashiniApi = Bhashini()
 @app.route('/')
 def initialRoute():
     return """<!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>API Endpoints</title>
-    </head>
-    <body>
-        <h1>API Endpoints</h1>
-        <p>Below are the available endpoints:</p>
-        
-        <h2>/config</h2>
-        <p><b>Method:</b> POST</p>
-        <p><b>Arguments:</b></p>
-        <ul>
-            <li>sourceLanguage (string)</li>
-            <li>targetLanguage (string)</li>
-        </ul>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Endpoints</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        h1, h2 {
+            margin-top: 20px;
+        }
+        ul {
+            margin-top: 5px;
+            margin-bottom: 10px;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+        p, ul {
+            font-size: 16px;
+        }
+        h1 {
+            font-size: 24px;
+        }
+        h2 {
+            font-size: 20px;
+        }
+        b {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>API Endpoints</h1>
+    <p>Below are the available endpoints:</p>
+    
+    <h2>/config</h2>
+    <p><b>Method:</b> POST</p>
+    <p><b>Arguments:</b></p>
+    <ul>
+        <li>sourceLanguage (string)</li>
+        <li>targetLanguage (string)</li>
+    </ul>
 
-        <h2>/speechTranslation</h2>
-        <p><b>Method:</b> POST</p>
-        <p><b>Arguments:</b></p>
-        <ul>
-            <li>sourceLanguage (string)</li>
-            <li>targetLanguage (string)</li>
-            <li>asrServiceId (string)</li>
-            <li>nmtServiceId (string)</li>
-            <li>ttsServiceId (string)</li>
-            <li>payload (string)</li>
-            <li>computeCallAuthName (string)</li>
-            <li>computeCallAuthValue (string)</li>
-            <li>callbackURL (string)</li>
-        </ul>
+    <h2>/speechTranslation</h2>
+    <p><b>Method:</b> POST</p>
+    <p><b>Arguments:</b></p>
+    <ul>
+        <li>sourceLanguage (string)</li>
+        <li>targetLanguage (string)</li>
+        <li>asrServiceId (string)</li>
+        <li>nmtServiceId (string)</li>
+        <li>ttsServiceId (string)</li>
+        <li>payload (string)</li>
+        <li>computeCallAuthName (string)</li>
+        <li>computeCallAuthValue (string)</li>
+        <li>callbackURL (string)</li>
+    </ul>
 
-        <h2>/speechToText</h2>
-        <p><b>Method:</b> POST</p>
-        <p><b>Arguments:</b></p>
-        <ul>
-            <li>sourceLanguage (string)</li>
-            <li>asrServiceId (string)</li>
-            <li>payload (string)</li>
-            <li>computeCallAuthName (string)</li>
-            <li>computeCallAuthValue (string)</li>
-            <li>callbackURL (string)</li>
-        </ul>
+    <h2>/speechToText</h2>
+    <p><b>Method:</b> POST</p>
+    <p><b>Arguments:</b></p>
+    <ul>
+        <li>sourceLanguage (string)</li>
+        <li>asrServiceId (string)</li>
+        <li>payload (string)</li>
+        <li>computeCallAuthName (string)</li>
+        <li>computeCallAuthValue (string)</li>
+        <li>callbackURL (string)</li>
+    </ul>
 
-        <h2>/textTranslation</h2>
-        <p><b>Method:</b> POST</p>
-        <p><b>Arguments:</b></p>
-        <ul>
-            <li>sourceLanguage (string)</li>
-            <li>targetLanguage (string)</li>
-            <li>nmtServiceId (string)</li>
-            <li>text (string)</li>
-            <li>computeCallAuthName (string)</li>
-            <li>computeCallAuthValue (string)</li>
-            <li>callbackURL (string)</li>
-        </ul>
+    <h2>/textTranslation</h2>
+    <p><b>Method:</b> POST</p>
+    <p><b>Arguments:</b></p>
+    <ul>
+        <li>sourceLanguage (string)</li>
+        <li>targetLanguage (string)</li>
+        <li>nmtServiceId (string)</li>
+        <li>text (string)</li>
+        <li>computeCallAuthName (string)</li>
+        <li>computeCallAuthValue (string)</li>
+        <li>callbackURL (string)</li>
+    </ul>
 
-        <h2>/textToSpeech</h2>
-        <p><b>Method:</b> POST</p>
-        <p><b>Arguments:</b></p>
-        <ul>
-            <li>targetLanguage (string)</li>
-            <li>ttsServiceId (string)</li>
-            <li>text (string)</li>
-            <li>computeCallAuthName (string)</li>
-            <li>computeCallAuthValue (string)</li>
-            <li>callbackURL (string)</li>
-        </ul>
+    <h2>/textToSpeech</h2>
+    <p><b>Method:</b> POST</p>
+    <p><b>Arguments:</b></p>
+    <ul>
+        <li>targetLanguage (string)</li>
+        <li>ttsServiceId (string)</li>
+        <li>text (string)</li>
+        <li>computeCallAuthName (string)</li>
+        <li>computeCallAuthValue (string)</li>
+        <li>callbackURL (string)</li>
+    </ul>
 
-        <h2>/getTranslations</h2>
-        <p><b>Method:</b> POST</p>
-        <p><b>Arguments:</b></p>
-        <ul>
-            <li>sourceLanguage (string)</li>
-            <li>targetLanguage (string)</li>
-            <li>sourceAudio (string)</li>
-            <li>targetAudio (string)</li>
-        </ul>
-    </body>
-    </html>
+    <h2>/getTranslations</h2>
+    <p><b>Method:</b> POST</p>
+    <p><b>Arguments:</b></p>
+    <ul>
+        <li>sourceLanguage (string)</li>
+        <li>targetLanguage (string)</li>
+        <li>sourceAudio (string)</li>
+        <li>targetAudio (string)</li>
+    </ul>
+</body>
+</html>
+
     """
 
 @app.route('/config', methods = ['POST'])
