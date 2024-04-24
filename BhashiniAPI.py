@@ -11,7 +11,50 @@ class Bhashini:
 
 
     def __init__(self):
-        pass
+        body = {
+            "pipelineTasks" : [
+                {
+                    "taskType" : "asr"
+                },
+                {
+                    "taskType": "translation"
+                },
+                {  
+                    "taskType": "tts"
+                }
+            ],
+            "pipelineRequestConfig" : {
+                "pipelineId": "64392f96daac500b55c543cd"
+            }
+        }
+        
+        self.response = requests.post(url=self.ulcaBaseURL + self.modelPipelineEndpoint,json=body, headers={"userID": self.userId, "ulcaApiKey": self.apiKey}).json()
+        self.languageConfigData = self.response['pipelineResponseConfig'][1]['config']
+        availableLang = ['bn', 'en', 'gu', 'hi', 'kn', 'ml', 'mr', 'or', 'pa','ta','te']
+        self.languageConfigs = {}
+
+        for i in availableLang:
+            self.languageConfigs[i] = []
+
+        
+        for i in availableLang:
+            data = []
+            for j in self.languageConfigData:
+                if (j['language']['sourceLanguage'] == i):
+                    data.append({'targetLanguage':j['language']['targetLanguage'],'serviceId': j['serviceId']})
+            self.languageConfigs[i] = data
+
+        # print(self.languageConfigs)
+      
+
+        self.inferenceApiKey = {
+            "Authorization":
+            "hXd6A71xfDHygwnSEXUjFsmd64Vi8vpmhV4geokrx37JZQYXLf0QKsEaABvz4GRX"
+        }
+
+        self.callbackUrl = "https://dhruva-api.bhashini.gov.in/services/inference/pipeline"
+
+        
 
     def sendHeaderWithConfig(self, sourceLanguage, targetLanguage):
         header = {
@@ -54,8 +97,7 @@ class Bhashini:
             return None
     
 
-    def speechToText(self,sourceLanguage,asrServiceId,payload,computeCallAuthKey,computeCallAuthValue,callbackUrl):
-        header = {computeCallAuthKey:computeCallAuthValue}
+    def speechToText(self,sourceLanguage,asrServiceId,payload):
         body = {
                 "pipelineTasks": [
                     {
@@ -79,12 +121,11 @@ class Bhashini:
                 }
             }
 
-        response = requests.post(callbackUrl,headers=header,json=body)
+        response = requests.post(self.callbackUrl,headers=self.inferenceApiKey,json=body)
         return response.json()
 
 
-    def textTranslation(self,callbackUrl,nmtServiceId,sourceLanguage,targetLanguage,text,computeCallAuthKey,computeCallAuthValue):
-        header = {computeCallAuthKey:computeCallAuthValue}
+    def textTranslation(self,nmtServiceId,sourceLanguage,targetLanguage,text):
         body = {
                 "pipelineTasks": [
                     {
@@ -107,12 +148,11 @@ class Bhashini:
                 }
             }
         
-        response = requests.post(callbackUrl,headers=header,json=body)
+        response = requests.post(self.callbackUrl,headers=self.inferenceApiKey,json=body)
         return response.json()
 
 
-    def textToSpeech(self,callbackUrl,ttsServiceId,text,targetLanguage,computeCallAuthKey,computeCallAuthValue):
-        header = {computeCallAuthKey:computeCallAuthValue}
+    def textToSpeech(self,ttsServiceId,text,targetLanguage):
         body = {
                 "pipelineTasks": [       
                 {
@@ -136,39 +176,53 @@ class Bhashini:
             }
         }
 
-        response = requests.post(callbackUrl,headers=header,json=body)
+        response = requests.post(self.callbackUrl,headers=self.inferenceApiKey,json=body)
         return response.json()
     
     def audioToAudioTranslation(self,sourceLanguage,targetLanguage,sourceAudio,targetAudio):
-        print(f"Source Language: {sourceLanguage}")
-        print(f"Target Language: {targetLanguage}")
-        if (sourceAudio != ""):
-            configData = self.sendHeaderWithConfig(sourceLanguage,targetLanguage)
-            configs = {'asr':configData['pipelineResponseConfig'][0]['config'][0],'translation':configData['pipelineResponseConfig'][1]['config'][0],'tts':configData['pipelineResponseConfig'][2]['config'][0]}
-            pipelineInferenceAPIEndPoint = configData['pipelineInferenceAPIEndPoint']
+        configs = {}
         
-            callbackUrl = pipelineInferenceAPIEndPoint['callbackUrl']
-            inferenceApiKey = pipelineInferenceAPIEndPoint['inferenceApiKey']
-            speechToText = self.speechToText(sourceLanguage,configs["asr"]['serviceId'],sourceAudio,inferenceApiKey['name'],inferenceApiKey['value'],callbackUrl)
-            textTranslation = self.textTranslation(callbackUrl,configs['translation']['serviceId'],sourceLanguage,targetLanguage,speechToText['pipelineResponse'][0]['output'][0]['source'],inferenceApiKey['name'],inferenceApiKey['value'])
-            textToSpeech = self.textToSpeech(callbackUrl,configs['tts']['serviceId'],textTranslation['pipelineResponse'][0]['output'][0]['target'],targetLanguage,inferenceApiKey['name'],inferenceApiKey['value'])
-            # response = {'sourceLanguage':sourceLanguage,'targetLanguage':targetLanguage, 'sourceAudio':sourceAudio,'targetAudio':textToSpeech['pipelineResponse'][0]['audio'][0]['audioContent'],'sourceText':speechToText['pipelineResponse'][0]['output'][0]['source'],'targetText':textTranslation['pipelineResponse'][0]['output'][0]['target']}
+        ASRData = Bhashini().response['pipelineResponseConfig'][0]['config']
+        for i in ASRData:
+            if (i['language']['sourceLanguage'] == sourceLanguage):
+                configs['asr'] = i['serviceId']
+
+        NMTData = Bhashini().response['pipelineResponseConfig'][1]['config']
+        for i in NMTData:
+            if (i['language']['sourceLanguage'] == sourceLanguage and i['language']['targetLanguage'] == targetLanguage):
+                configs['translation'] = i['serviceId']
+
+        TTSData = Bhashini().response['pipelineResponseConfig'][2]['config']
+        for i in TTSData:
+            if (i['language']['sourceLanguage'] == targetLanguage):
+                configs['tts'] = i['serviceId']
+
+        if (sourceAudio != ""):
+            
+            speechToText = self.speechToText(sourceLanguage,configs["asr"],sourceAudio)
+            textTranslation = self.textTranslation(configs['translation'],sourceLanguage,targetLanguage,speechToText['pipelineResponse'][0]['output'][0]['source'])
+            textToSpeech = self.textToSpeech(configs['tts'],textTranslation['pipelineResponse'][0]['output'][0]['target'],targetLanguage)
+            
             response = {'P1':{'text':speechToText['pipelineResponse'][0]['output'][0]['source'],'audio':sourceAudio,'emotion':'','intent':''},'P2':{'text':textTranslation['pipelineResponse'][0]['output'][0]['target'],'audio':textToSpeech['pipelineResponse'][0]['audio'][0]['audioContent'],'emotion':'','intent':''},'LM':0}
-            print(f"Source Text: {response['P1']['text']}")
-            print(f"Target Text: {response['P2']['text']}")
+          
             return response
         
-        configData = self.sendHeaderWithConfig(sourceLanguage,targetLanguage)
-        configs = {'asr':configData['pipelineResponseConfig'][0]['config'][0],'translation':configData['pipelineResponseConfig'][1]['config'][0],'tts':configData['pipelineResponseConfig'][2]['config'][0]}
-        pipelineInferenceAPIEndPoint = configData['pipelineInferenceAPIEndPoint']
-        callbackUrl = pipelineInferenceAPIEndPoint['callbackUrl']
-        inferenceApiKey = pipelineInferenceAPIEndPoint['inferenceApiKey']
-
-        speechToText = self.speechToText(sourceLanguage,configs["asr"]['serviceId'],targetAudio,inferenceApiKey['name'],inferenceApiKey['value'],callbackUrl)
-        textTranslation = self.textTranslation(callbackUrl,configs['translation']['serviceId'],sourceLanguage,targetLanguage,speechToText['pipelineResponse'][0]['output'][0]['source'],inferenceApiKey['name'],inferenceApiKey['value'])
-        textToSpeech = self.textToSpeech(callbackUrl,configs['tts']['serviceId'],textTranslation['pipelineResponse'][0]['output'][0]['target'],targetLanguage,inferenceApiKey['name'],inferenceApiKey['value'])
-        # response = {'sourceLanguage':sourceLanguage,'targetLanguage':targetLanguage, 'sourceAudio':sourceAudio,'targetAudio':textToSpeech['pipelineResponse'][0]['audio'][0]['audioContent'],'sourceText':speechToText['pipelineResponse'][0]['output'][0]['source'],'targetText':textTranslation['pipelineResponse'][0]['output'][0]['target']}
-        # response = {'P1':{'text':speechToText['pipelineResponse'][0]['output'][0]['source'],'audio':sourceAudio,'emotion':'','intent':''},'P2':{'text':textTranslation['pipelineResponse'][0]['output'][0]['target'],'audio':textToSpeech['pipelineResponse'][0]['audio'][0]['audioContent'],'emotion':'','intent':''},'LM':0}
+        
+        speechToText = self.speechToText(sourceLanguage,configs["asr"],targetAudio)
+        textTranslation = self.textTranslation(configs['translation'],sourceLanguage,targetLanguage,speechToText['pipelineResponse'][0]['output'][0]['source'])
+        textToSpeech = self.textToSpeech(configs['tts'],textTranslation['pipelineResponse'][0]['output'][0]['target'],targetLanguage)
+       
         response = {'P1':{'text':textTranslation['pipelineResponse'][0]['output'][0]['target'],'audio':textToSpeech['pipelineResponse'][0]['audio'][0]['audioContent'],'emotion':'','intent':''},'P2':{'text':speechToText['pipelineResponse'][0]['output'][0]['source'],'audio':targetAudio,'emotion':'','intent':''},'LM':0}
+        
         return response
+    
+    def getAllTranslations(self,text,sourceLanguage):
+        response = {}
+        languageConfigs = self.languageConfigs[sourceLanguage]
+
+        for i in languageConfigs:
+            response[i['targetLanguage']] = self.textTranslation(i['serviceId'],sourceLanguage,i['targetLanguage'],text)['pipelineResponse'][0]['output'][0]['target']
+
+        return response
+
 
