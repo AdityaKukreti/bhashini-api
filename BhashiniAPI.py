@@ -109,7 +109,7 @@ class Bhashini:
             return None
     
 
-    def speechToText(self,sourceLanguage,asrServiceId,payload):
+    def speechToText(self,sourceLanguage,payload):
         body = {
                 "pipelineTasks": [
                     {
@@ -118,7 +118,7 @@ class Bhashini:
                             "language": {
                                 "sourceLanguage": sourceLanguage
                             },
-                            "serviceId": asrServiceId,
+                            "serviceId": self.asrConfigs[sourceLanguage],
                             "audioFormat": "flac",
                             "samplingRate": 16000
                         }
@@ -133,7 +133,9 @@ class Bhashini:
                 }
             }
 
+        # print(asrServiceId)
         response = requests.post(self.callbackUrl,headers=self.inferenceApiKey,json=body).json()['pipelineResponse'][0]['output'][0]['source']
+        # print(response)
         return response
 
 
@@ -246,20 +248,23 @@ class Bhashini:
 
         return response
 
-    def getAllVoiceTranslations(self,base64,sourceLanguage):
+    def getAllVoiceTranslations(self,text,sourceLanguage):
         
-        voiceToText = self.speechToText(sourceLanguage,self.asrConfigs[sourceLanguage],base64)
-        textTranslation = self.getAllTranslations(voiceToText,sourceLanguage)
-        textTranslation[sourceLanguage] = voiceToText
+        # voiceToText = self.speechToText(sourceLanguage,base64)
+        textTranslation = self.getAllTranslations(text,sourceLanguage)
+        # textTranslation[sourceLanguage] = voiceToText
         textToSpeech = self.voiceTranslations(textTranslation)
         
-        return textToSpeech
+        with open("output.json",'w') as file:
+            json.dump(textToSpeech,file)
+        return "output.json"
 
         
 
-
-# Bhashini().getAllVoiceTranslations(open('sourceAudio.txt').read(),'en')
-
+# print(requests.post('http://127.0.0.1:10000/getAllVoiceTranslations', json={'payload':open('sourceAudio.txt').read(),'sourceLanguage':'en'}).json())
+# Bhashini().getAllVoiceTranslations(open('sourceAudio.txt').read(),'en')['gu']
 # print(Bhashini().getAllTranslations('hi','en'))
-
+# print(Bhashini().speechToText('en',open('sourceAudio.txt').read()))
 # Bhashini().getAllVoiceTranslations()
+
+# print(requests.post("https://bhashini-api.onrender.com/speechToText",json = {'sourceLanguage':'en','payload':open('sourceAudio.txt').read()}).json())

@@ -1,6 +1,7 @@
 from flask import Flask,request,jsonify
 from BhashiniAPI import *
 from AudioClassifier import AudioClassifier
+import json
 
 
 
@@ -118,8 +119,10 @@ def getAllVoiceTranslations():
     sourceLanguage = data['sourceLanguage']
     payload = data['payload']
 
-    response = bhashiniApi.getAllVoiceTranslations(payload,sourceLanguage)
-    return jsonify({'response':response})
+    response = bhashiniApi.getAllVoiceTranslations(bhashiniApi.speechToText(sourceLanguage,payload),sourceLanguage)
+    
+    with open(response,'r') as file:
+        return {"response":json.load(file)}
 
 if (__name__ == '__main__'):
     app.run(host = "0.0.0.0", port = 10000)
