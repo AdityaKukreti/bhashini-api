@@ -141,18 +141,16 @@ def getAllVoiceTranslations():
         file_data = file.read()
         payload = base64.b64encode(file_data).decode('utf-8')
 
-        # Get the source language from the request data
-        data = request.get_json()
-        if data is None or 'sourceLanguage' not in data:
+        # Get the source language from the form data
+        sourceLanguage = request.form.get('sourceLanguage')
+        if sourceLanguage is None:
             return jsonify({"error": "Source language not provided"}), 400
-
-        sourceLanguage = data['sourceLanguage']
 
         # Call the speechToText function with the payload and source language
         response = bhashiniApi.getAllVoiceTranslations(bhashiniApi.speechToText(sourceLanguage, payload), sourceLanguage)
 
         with open(response, 'r') as file:
-            return {"response": json.load(file)}
+            return jsonify({"response": json.load(file)})
     else:
         return jsonify({"error": "Invalid file format. Only MP3 files are allowed."}), 400
 
