@@ -1,8 +1,6 @@
 from flask import Flask,request,jsonify
 from BhashiniAPI import *
 from AudioClassifier import AudioClassifier
-import json
-import base64
 
 
 
@@ -114,45 +112,14 @@ def getAllTextTranslations():
 
     return jsonify({'response':response})
 
-# @app.route('/getAllVoiceTranslations', methods = ['POST'])
-# def getAllVoiceTranslations():
-#     data = request.get_json()
-#     sourceLanguage = data['sourceLanguage']
-#     payload = data['payload']
-
-#     payload = base64.b64encode(payload).decode('utf-8')
-
-#     response = bhashiniApi.getAllVoiceTranslations(bhashiniApi.speechToText(sourceLanguage,payload),sourceLanguage)
-    
-#     with open(response,'r') as file:
-#         return {"response":json.load(file)}
-
-@app.route('/getAllVoiceTranslations', methods=['POST'])
+@app.route('/getAllVoiceTranslations', methods = ['POST'])
 def getAllVoiceTranslations():
-    if 'file' not in request.files:
-        return jsonify({"error": "No file provided"}), 400
+    data = request.get_json()
+    sourceLanguage = data['sourceLanguage']
+    payload = data['payload']
 
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({"error": "No file selected"}), 400
-
-    if file and file.filename.lower().endswith('.mp3'):
-        # Read the MP3 file and convert its data to base64
-        file_data = file.read()
-        payload = base64.b64encode(file_data).decode('utf-8')
-
-        # Get the source language from the form data
-        sourceLanguage = request.form.get('sourceLanguage')
-        if sourceLanguage is None:
-            return jsonify({"error": "Source language not provided"}), 400
-
-        # Call the speechToText function with the payload and source language
-        response = bhashiniApi.getAllVoiceTranslations(bhashiniApi.speechToText(sourceLanguage, payload), sourceLanguage)
-
-        with open(response, 'r') as file:
-            return jsonify({"response": json.load(file)})
-    else:
-        return jsonify({"error": "Invalid file format. Only MP3 files are allowed."}), 400
+    response = bhashiniApi.getAllVoiceTranslations(payload,sourceLanguage)
+    return jsonify({'response':response})
 
 if (__name__ == '__main__'):
     app.run(host = "0.0.0.0", port = 10000)
