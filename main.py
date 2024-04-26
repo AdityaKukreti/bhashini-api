@@ -2,6 +2,7 @@ from flask import Flask,request,jsonify
 from BhashiniAPI import *
 from AudioClassifier import AudioClassifier
 import json
+import base64
 
 
 
@@ -118,6 +119,8 @@ def getAllVoiceTranslations():
     data = request.get_json()
     sourceLanguage = data['sourceLanguage']
     payload = data['payload']
+
+    payload = base64.b64encode(payload).decode('utf-8')
 
     response = bhashiniApi.getAllVoiceTranslations(bhashiniApi.speechToText(sourceLanguage,payload),sourceLanguage)
     
