@@ -1,5 +1,6 @@
 import os
 import requests
+import json
 
 
 class Bhashini:
@@ -29,22 +30,33 @@ class Bhashini:
         }
         
         self.response = requests.post(url=self.ulcaBaseURL + self.modelPipelineEndpoint,json=body, headers={"userID": self.userId, "ulcaApiKey": self.apiKey}).json()
-        self.languageConfigData = self.response['pipelineResponseConfig'][1]['config']
+        self.asrData = self.response['pipelineResponseConfig'][0]['config']
+        self.nmtData = self.response['pipelineResponseConfig'][1]['config']
+        self.ttsData = self.response['pipelineResponseConfig'][2]['config']
         availableLang = ['bn', 'en', 'gu', 'hi', 'kn', 'ml', 'mr', 'or', 'pa','ta','te']
-        self.languageConfigs = {}
+        self.asrConfigs = {}
+        self.nmtConfigs = {}
+        self.ttsConfigs = {}
 
         for i in availableLang:
-            self.languageConfigs[i] = []
+            self.nmtConfigs[i] = []
 
-        
+        for i in self.asrData:
+            if (i['language']['sourceLanguage'] in availableLang):
+                self.asrConfigs[i['language']['sourceLanguage']] = i['serviceId']
+          
+
         for i in availableLang:
             data = []
-            for j in self.languageConfigData:
+            for j in self.nmtData:
                 if (j['language']['sourceLanguage'] == i):
                     data.append({'targetLanguage':j['language']['targetLanguage'],'serviceId': j['serviceId']})
-            self.languageConfigs[i] = data
+            self.nmtConfigs[i] = data
 
-        # print(self.languageConfigs)
+        for i in self.ttsData:
+            if (i['language']['sourceLanguage'] in availableLang):
+                self.ttsConfigs[i['language']['sourceLanguage']] = i['serviceId']
+          
       
 
         self.inferenceApiKey = {
@@ -54,7 +66,7 @@ class Bhashini:
 
         self.callbackUrl = "https://dhruva-api.bhashini.gov.in/services/inference/pipeline"
 
-        
+        # print(self.response['pipelineResponseConfig'])
 
     def sendHeaderWithConfig(self, sourceLanguage, targetLanguage):
         header = {
@@ -121,8 +133,8 @@ class Bhashini:
                 }
             }
 
-        response = requests.post(self.callbackUrl,headers=self.inferenceApiKey,json=body)
-        return response.json()
+        response = requests.post(self.callbackUrl,headers=self.inferenceApiKey,json=body).json()['pipelineResponse'][0]['output'][0]['source']
+        return response
 
 
     def textTranslation(self,nmtServiceId,sourceLanguage,targetLanguage,text):
@@ -218,11 +230,36 @@ class Bhashini:
     
     def getAllTranslations(self,text,sourceLanguage):
         response = {}
-        languageConfigs = self.languageConfigs[sourceLanguage]
+        languageConfigs = self.nmtConfigs[sourceLanguage]
 
         for i in languageConfigs:
             response[i['targetLanguage']] = self.textTranslation(i['serviceId'],sourceLanguage,i['targetLanguage'],text)['pipelineResponse'][0]['output'][0]['target']
 
         return response
 
+    def voiceTranslations(self,textTranslation):
+        response = {}
 
+        for i in self.ttsConfigs:
+            # response[i] = self.(i,self.ttsConfigs[i],textTranslspeechToTextation)
+            response[i] = self.textToSpeech(self.ttsConfigs[i],textTranslation[i],i)['pipelineResponse'][0]['audio'][0]['audioContent']
+
+        return response
+
+    def getAllVoiceTranslations(self,base64,sourceLanguage):
+        
+        voiceToText = self.speechToText(sourceLanguage,self.asrConfigs[sourceLanguage],base64)
+        textTranslation = self.getAllTranslations(voiceToText,sourceLanguage)
+        textTranslation[sourceLanguage] = voiceToText
+        textToSpeech = self.voiceTranslations(textTranslation)
+        
+        return textToSpeech
+
+        
+
+
+# Bhashini().getAllVoiceTranslations(open('sourceAudio.txt').read(),'en')
+
+# print(Bhashini().getAllTranslations('hi','en'))
+
+# Bhashini().getAllVoiceTranslations()
