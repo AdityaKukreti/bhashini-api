@@ -18,45 +18,226 @@ voiceToText = VoiceToText()
 
 @app.route('/')
 def initialRoute():
-    return """<p>call the <b>/config</b> route to get the service ids and model ids</p>
-    <p>call the <b>/speechTranslation</b> route to get the speech translation from source to target language</p>
-    <p>call the <b>/speechToText</b> route to get the audio transcription</p>
-    <p>call the <b>/textTranslation</b> route to get the translation of text from source to target language</p>
-    <p>call the <b>/textToSpeech</b> route to get the audio of the text</p>
+    return """<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bhashini API Endpoints</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1000px;
+            padding: 20px;
+        }
+        .card {
+            background-color: #fff;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            padding: 20px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        .card h2 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        .card p {
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .method {
+            background-color: #007bff;
+            color: #fff;
+            padding: 3px 8px;
+            border-radius: 3px;
+            margin-right: 5px;
+        }
+        .description {
+            margin-bottom: 10px;
+        }
+        .argument-container,
+        .response-container {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #f9f9f9;
+        }
+        .argument-container h3,
+        .response-container h3 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        .argument-list,
+        .response-list {
+            list-style: none;
+            padding: 0;
+        }
+        .argument-item,
+        .response-item {
+            margin-bottom: 5px;
+        }
+        .argument-item span.data-type,
+        .response-item span.data-type {
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h2>/textTranslation</h2>
+            <div class="description">
+                <p><b>Description:</b> Translate text from one language to another.</p>
+                <p><b>Method:</b> <span class="method">POST</span></p>
+            </div>
+            <div class="argument-container">
+                <h3>Arguments:</h3>
+                <ul class="argument-list">
+                    <li class="argument-item"><b>sourceLanguage:</b> <span class="data-type">string</span></li>
+                    <li class="argument-item"><b>targetLanguage:</b> <span class="data-type">string</span></li>
+                    <li class="argument-item"><b>nmtServiceId:</b> <span class="data-type">string</span></li>
+                    <li class="argument-item"><b>text:</b> <span class="data-type">string</span></li>
+                </ul>
+            </div>
+            <div class="response-container">
+                <h3>Response:</h3>
+                <ul class="response-list">
+                    <li class="response-item"><b>TranslatedText:</b> <span class="data-type">string</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>/textToSpeech</h2>
+            <div class="description">
+                <p><b>Description:</b> Convert text to speech in the specified language.</p>
+                <p><b>Method:</b> <span class="method">POST</span></p>
+            </div>
+            <div class="argument-container">
+                <h3>Arguments:</h3>
+                <ul class="argument-list">
+                    <li class="argument-item"><b>targetLanguage:</b> <span class="data-type">string</span></li>
+                    <li class="argument-item"><b>ttsServiceId:</b> <span class="data-type">string</span></li>
+                    <li class="argument-item"><b>text:</b> <span class="data-type">string</span></li>
+                </ul>
+            </div>
+            <div class="response-container">
+                <h3>Response:</h3>
+                <ul class="response-list">
+                    <li class="response-item"><b>Audio:</b> <span class="data-type">audio</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>/getTranslations</h2>
+            <div class="description">
+                <p><b>Description:</b> Translate audio from one language to another.</p>
+                <p><b>Method:</b> <span class="method">POST</span></p>
+            </div>
+            <div class="argument-container">
+                <h3>Arguments:</h3>
+                <ul class="argument-list">
+                    <li class="argument-item"><b>sourceLanguage:</b> <span class="data-type">string</span></li>
+                    <li class="argument-item"><b>targetLanguage:</b> <span class="data-type">string</span></li>
+                    <li class="argument-item"><b>sourceAudio:</b> <span class="data-type">audio</span></li>
+                    <li class="argument-item"><b>targetAudio:</b> <span class="data-type">audio</span></li>
+                </ul>
+            </div>
+            <div class="response-container">
+                <h3>Response:</h3>
+                <ul class="response-list">
+                    <li class="response-item"><b>TranslatedAudio:</b> <span class="data-type">audio</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>/audioSentiment</h2>
+            <div class="description">
+                <p><b>Description:</b> Analyze sentiment of the provided audio file.</p>
+                <p><b>Method:</b> <span class="method">POST</span></p>
+            </div>
+            <div class="argument-container">
+                <h3>Arguments:</h3>
+                <ul class="argument-list">
+                    <li class="argument-item"><b>file:</b> <span class="data-type">audio</span></li>
+                </ul>
+            </div>
+            <div class="response-container">
+                <h3>Response:
+                <ul class="response-list">
+                    <li class="response-item"><b>Sentiment:</b> <span class="data-type">string</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>/getAllTextTranslations</h2>
+            <div class="description">
+                <p><b>Description:</b> Get translations of the provided text in multiple languages.</p>
+                <p><b>Method:</b> <span class="method">POST</span></p>
+            </div>
+            <div class="argument-container">
+                <h3>Arguments:</h3>
+                <ul class="argument-list">
+                    <li class="argument-item"><b>text:</b> <span class="data-type">string</span></li>
+                    <li class="argument-item"><b>sourceLanguage:</b> <span class="data-type">string</span></li>
+                </ul>
+            </div>
+            <div class="response-container">
+                <h3>Response:</h3>
+                <ul class="response-list">
+                    <li class="response-item"><b>Translations:</b> <span class="data-type">map[string]string</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>/getAllVoiceTranslations</h2>
+            <div class="description">
+                <p><b>Description:</b> Get translations of the provided audio file in multiple languages.</p>
+                <p><b>Method:</b> <span class="method">POST</span></p>
+            </div>
+            <div class="argument-container">
+                <h3>Arguments:</h3>
+                <ul class="argument-list">
+                    <li class="argument-item"><b>audio_file:</b> <span class="data-type">audio</span></li>
+                    <li class="argument-item"><b>sourceLanguage:</b> <span class="data-type">string</span></li>
+                </ul>
+            </div>
+            <div class="response-container">
+                <h3>Response:</h3>
+                <ul class="response-list">
+                    <li class="response-item"><b>Translations:</b> <span class="data-type">map[string]string</span></li>
+                    <li class="response-item"><b>Sentiment:</b> <span class="data-type">string</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+
     """
 
-@app.route('/config', methods = ['POST'])
-def getConfig():
-    data = request.get_json()
-    sourceLanguage = data['sourceLanguage']
-    targetLanguage = data['targetLanguage']
-    return jsonify({'response':bhashiniApi.sendHeaderWithConfig(sourceLanguage,targetLanguage)})
 
-@app.route('/speechTranslation',methods = ['POST'])
-def speechTranslation():
-    data = request.get_json()
-    sourceLanguage = data['sourceLanguage']
-    targetLanguage = data['targetLanguage']
-    asrServiceId = data['asrServiceId']
-    nmtServiceId = data['nmtServiceId']
-    ttsServiceId = data['ttsServiceId']
-    payload = data['payload']
     
-
-    audioText = bhashiniApi.speechToText(sourceLanguage,asrServiceId,payload)['pipelineResponse'][0]['output'][0]['source']
-    translatedText = bhashiniApi.textTranslation(nmtServiceId,sourceLanguage,targetLanguage,audioText)['pipelineResponse'][0]['output'][0]['target']
-    textAudio = bhashiniApi.textToSpeech(ttsServiceId,translatedText,targetLanguage)['pipelineResponse'][0]['audio'][0]['audioContent']
-    return jsonify({"translatedAudio":textAudio})
-
-
-@app.route('/speechToText', methods = ['POST'])
-def speechRecognition():
-    data = request.get_json()
-    sourceLanguage = data['sourceLanguage']
-    asrServiceId = data['asrServiceId']
-    payload = data['payload']
- 
-    return jsonify({'response':bhashiniApi.speechToText(sourceLanguage,asrServiceId,payload)})
 
 @app.route('/textTranslation',methods = ['POST'])
 def textTranslation():
@@ -140,7 +321,7 @@ def getAllVoiceTranslations():
     response = bhashiniApi.getAllVoiceTranslations(text, source_language)
 
 
-    return jsonify({'response': response})
+    return jsonify({'response': response,'sentiment':audioClassifier.query(audio_file_path)})
 
 if (__name__ == '__main__'):
     app.run(host = "0.0.0.0", port = 10000)

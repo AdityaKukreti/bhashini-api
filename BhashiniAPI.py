@@ -258,12 +258,3 @@ class Bhashini:
         
 
 
-# Bhashini().getAllVoiceTranslations(open('sourceAudio.txt').read(),'en')
-
-
-# Bhashini().getAllVoiceTranslations(open('sourceAudio.txt').read(),'en')
-
-# print(Bhashini().getAllTranslations('hi','en'))
-
-# Bhashini().getAllVoiceTranslations()
-# print(Bhashini().speechToText('en',open('sourceAudio.txt').read()))
