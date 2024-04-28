@@ -109,7 +109,7 @@ class Bhashini:
             return None
     
 
-    def speechToText(self,sourceLanguage,payload):
+    def speechToText(self,sourceLanguage,asrServiceId,payload):
         body = {
                 "pipelineTasks": [
                     {
@@ -118,7 +118,7 @@ class Bhashini:
                             "language": {
                                 "sourceLanguage": sourceLanguage
                             },
-                            "serviceId": self.asrConfigs[sourceLanguage],
+                            "serviceId": asrServiceId,
                             "audioFormat": "flac",
                             "samplingRate": 16000
                         }
@@ -254,8 +254,12 @@ class Bhashini:
         textToSpeech = self.voiceTranslations(textTranslation)
         
         return textToSpeech
+        return textToSpeech
 
         
+
+
+# Bhashini().getAllVoiceTranslations(open('sourceAudio.txt').read(),'en')
 
 
 # Bhashini().getAllVoiceTranslations(open('sourceAudio.txt').read(),'en')
