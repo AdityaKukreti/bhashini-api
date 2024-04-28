@@ -1,7 +1,7 @@
 from flask import Flask,request,jsonify
 from BhashiniAPI import *
 from AudioClassifier import AudioClassifier
-import json
+from voiceToText import VoiceToText
 
 
 
@@ -14,6 +14,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 bhashiniApi = Bhashini()
 audioClassifier = AudioClassifier()
+voiceToText = VoiceToText()
 
 @app.route('/')
 def initialRoute():
@@ -113,16 +114,33 @@ def getAllTextTranslations():
 
     return jsonify({'response':response})
 
-@app.route('/getAllVoiceTranslations', methods = ['POST'])
-def getAllVoiceTranslations():
-    data = request.get_json()
-    sourceLanguage = data['sourceLanguage']
-    payload = data['payload']
 
-    response = bhashiniApi.getAllVoiceTranslations(bhashiniApi.speechToText(sourceLanguage,payload),sourceLanguage)
-    
-    with open(response,'r') as file:
-        return {"response":json.load(file)}
+
+@app.route('/getAllVoiceTranslations', methods=['POST'])
+def getAllVoiceTranslations():
+    if 'audio_file' not in request.files:
+        return jsonify({'error': 'No audio file found'}), 400
+
+    audio_file = request.files['audio_file']
+    filename = audio_file.filename
+
+    # Save the audio file to a desired location
+    audio_file_path = os.path.join(filename)
+    audio_file.save(audio_file_path)
+
+    # Get the source language from the request data
+    data = request.form
+    source_language = data.get('sourceLanguage')
+
+    if source_language is None:
+        return jsonify({'error': 'Source language not provided'}), 400
+
+    # Process the audio file and get the translations
+    text = voiceToText.getTranscription(audio_file_path,source_language)
+    response = bhashiniApi.getAllVoiceTranslations(text, source_language)
+
+
+    return jsonify({'response': response})
 
 if (__name__ == '__main__'):
     app.run(host = "0.0.0.0", port = 10000)

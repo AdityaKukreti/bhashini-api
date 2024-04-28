@@ -1,6 +1,6 @@
 import os
 import requests
-import json
+import base64
 
 
 class Bhashini:
@@ -133,9 +133,7 @@ class Bhashini:
                 }
             }
 
-        # print(asrServiceId)
         response = requests.post(self.callbackUrl,headers=self.inferenceApiKey,json=body).json()['pipelineResponse'][0]['output'][0]['source']
-        # print(response)
         return response
 
 
@@ -222,7 +220,7 @@ class Bhashini:
             return response
         
         
-        speechToText = self.speechToText(sourceLanguage,configs["asr"],targetAudio)
+        speechToText = self.speechToText(sourceLanguage,targetAudio)
         textTranslation = self.textTranslation(configs['translation'],sourceLanguage,targetLanguage,speechToText['pipelineResponse'][0]['output'][0]['source'])
         textToSpeech = self.textToSpeech(configs['tts'],textTranslation['pipelineResponse'][0]['output'][0]['target'],targetLanguage)
        
@@ -235,36 +233,34 @@ class Bhashini:
         languageConfigs = self.nmtConfigs[sourceLanguage]
 
         for i in languageConfigs:
-            response[i['targetLanguage']] = self.textTranslation(i['serviceId'],sourceLanguage,i['targetLanguage'],text)['pipelineResponse'][0]['output'][0]['target']
-
+            try:
+                response[i['targetLanguage']] = self.textTranslation(i['serviceId'],sourceLanguage,i['targetLanguage'],text)['pipelineResponse'][0]['output'][0]['target']
+            except:
+                print("error")
         return response
 
     def voiceTranslations(self,textTranslation):
         response = {}
-
+        print(self.ttsConfigs)
         for i in self.ttsConfigs:
-            # response[i] = self.(i,self.ttsConfigs[i],textTranslspeechToTextation)
             response[i] = self.textToSpeech(self.ttsConfigs[i],textTranslation[i],i)['pipelineResponse'][0]['audio'][0]['audioContent']
 
         return response
 
     def getAllVoiceTranslations(self,text,sourceLanguage):
         
-        # voiceToText = self.speechToText(sourceLanguage,base64)
         textTranslation = self.getAllTranslations(text,sourceLanguage)
-        # textTranslation[sourceLanguage] = voiceToText
+        textTranslation[sourceLanguage] = text
         textToSpeech = self.voiceTranslations(textTranslation)
         
-        with open("output.json",'w') as file:
-            json.dump(textToSpeech,file)
-        return "output.json"
+        return textToSpeech
 
         
 
-# print(requests.post('http://127.0.0.1:10000/getAllVoiceTranslations', json={'payload':open('sourceAudio.txt').read(),'sourceLanguage':'en'}).json())
-# Bhashini().getAllVoiceTranslations(open('sourceAudio.txt').read(),'en')['gu']
-# print(Bhashini().getAllTranslations('hi','en'))
-# print(Bhashini().speechToText('en',open('sourceAudio.txt').read()))
-# Bhashini().getAllVoiceTranslations()
 
-# print(requests.post("https://bhashini-api.onrender.com/speechToText",json = {'sourceLanguage':'en','payload':open('sourceAudio.txt').read()}).json())
+# Bhashini().getAllVoiceTranslations(open('sourceAudio.txt').read(),'en')
+
+# print(Bhashini().getAllTranslations('hi','en'))
+
+# Bhashini().getAllVoiceTranslations()
+# print(Bhashini().speechToText('en',open('sourceAudio.txt').read()))
