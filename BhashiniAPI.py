@@ -243,7 +243,7 @@ class Bhashini:
         response = {}
         print(self.ttsConfigs)
         for i in self.ttsConfigs:
-            response[i] = base64.b64decode(self.textToSpeech(self.ttsConfigs[i],textTranslation[i],i)['pipelineResponse'][0]['audio'][0]['audioContent'])
+            response[i] = self.textToSpeech(self.ttsConfigs[i],textTranslation[i],i)['pipelineResponse'][0]['audio'][0]['audioContent']
 
         return response
 
