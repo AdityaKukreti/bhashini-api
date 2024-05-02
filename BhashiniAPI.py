@@ -30,7 +30,7 @@ class Bhashini:
         }
         
         self.response = requests.post(url=self.ulcaBaseURL + self.modelPipelineEndpoint,json=body, headers={"userID": self.userId, "ulcaApiKey": self.apiKey}).json()
-        self.asrData = self.response['pipelineResponseConfig'][0]['config']
+      #  self.asrData = self.response['pipelineResponseConfig'][0]['config']
         self.nmtData = self.response['pipelineResponseConfig'][1]['config']
         self.ttsData = self.response['pipelineResponseConfig'][2]['config']
         availableLang = ['bn', 'en', 'gu', 'hi', 'kn', 'ml', 'mr', 'or', 'pa','ta','te']
@@ -41,11 +41,11 @@ class Bhashini:
         for i in availableLang:
             self.nmtConfigs[i] = []
 
-        for i in self.asrData:
+     '''   for i in self.asrData:
             if (i['language']['sourceLanguage'] in availableLang):
                 self.asrConfigs[i['language']['sourceLanguage']] = i['serviceId']
           
-
+'''
         for i in availableLang:
             data = []
             for j in self.nmtData:
