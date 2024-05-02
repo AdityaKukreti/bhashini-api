@@ -2,6 +2,7 @@ from flask import Flask,request,jsonify
 from BhashiniAPI import *
 from AudioClassifier import AudioClassifier
 from voiceToText import VoiceToText
+import base64
 
 
 
@@ -299,29 +300,19 @@ def getAllTextTranslations():
 
 @app.route('/getAllVoiceTranslations', methods=['POST'])
 def getAllVoiceTranslations():
-    if 'audio_file' not in request.files:
-        return jsonify({'error': 'No audio file found'}), 400
 
-    audio_file = request.files['audio_file']
-    filename = audio_file.filename
+    data = request.get_json()
+    audio = base64.b64decode(data['base64'])
+    sourceLanguage = data['sourceLanguage']
+    with open("audioFile.mp3","rb") as f:
+        f.write(audio)
+    
 
-    # Save the audio file to a desired location
-    audio_file_path = os.path.join(filename)
-    audio_file.save(audio_file_path)
-
-    # Get the source language from the request data
-    data = request.form
-    source_language = data.get('sourceLanguage')
-
-    if source_language is None:
-        return jsonify({'error': 'Source language not provided'}), 400
-
-    # Process the audio file and get the translations
-    text = voiceToText.getTranscription(audio_file_path,source_language)
-    response = bhashiniApi.getAllVoiceTranslations(text, source_language)
+    text = voiceToText.getTranscription("audioFile.mp3",sourceLanguage)
+    response = bhashiniApi.getAllVoiceTranslations(text, sourceLanguage)
 
 
-    return jsonify({'response': response,'sentiment':audioClassifier.query(audio_file_path)})
+    return jsonify({'response': response,'sentiment':audioClassifier.query("audioFile.mp3")})
 
 
 
