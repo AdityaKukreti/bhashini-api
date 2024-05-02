@@ -304,7 +304,7 @@ def getAllVoiceTranslations():
     data = request.get_json()
     audio = base64.b64decode(data['base64'])
     sourceLanguage = data['sourceLanguage']
-    with open("audioFile.mp3","rb") as f:
+    with open("audioFile.mp3","wb") as f:
         f.write(audio)
     
 
