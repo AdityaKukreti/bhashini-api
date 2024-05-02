@@ -41,11 +41,6 @@ class Bhashini:
         for i in availableLang:
             self.nmtConfigs[i] = []
 
-     '''   for i in self.asrData:
-            if (i['language']['sourceLanguage'] in availableLang):
-                self.asrConfigs[i['language']['sourceLanguage']] = i['serviceId']
-          
-'''
         for i in availableLang:
             data = []
             for j in self.nmtData:
