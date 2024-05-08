@@ -2,6 +2,7 @@ from flask import Flask,request,jsonify
 from BhashiniAPI import *
 from AudioClassifier import AudioClassifier
 from voiceToText import VoiceToText
+from LikenessAndIntent import LikenessAndIntent
 import base64
 
 
@@ -16,6 +17,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 bhashiniApi = Bhashini()
 audioClassifier = AudioClassifier()
 voiceToText = VoiceToText()
+likenessAndIntent = LikenessAndIntent()
 
 @app.route('/')
 def initialRoute():
@@ -313,6 +315,15 @@ def getAllVoiceTranslations():
 
 
     return jsonify({'response': response,'sentiment':audioClassifier.query("audioFile.mp3")})
+
+
+@app.route('/getLikenessAndIntent', methods = ['POST'])
+def getLikenessAndIntent():
+    
+    data = request.get_json()
+    conversation = data['conversation']
+
+    return jsonify({"response":likenessAndIntent.analyze_conversation(conversation)})
 
 
 
