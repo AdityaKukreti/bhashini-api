@@ -23,9 +23,10 @@ class LikenessAndIntent:
 
     
     Please provide a concise overview of the negotiation, not more than [300] characters, capturing the essence of the business interaction. Use a bullet format for each of the 4 aspects.
-    Give me the output in a python dictionary format with the value being an array of information. Use double inverted commas to enclose the information.
+    Give me the output in a python dictionary format with the value being an array of information. 
+    Use double inverted commas to enclose the information.
     Avoid writing any extra text like "Here is the output in a Python dictionary format:".
-    Make sure to follow python syntax and rules properly which doesn't cause any errors. Do ensure enclosing all quotation marks and braces.
+    Make sure to follow python syntax and rules properly which doesn't cause any errors. Do ensure enclosing all quotation marks, braces and brackets.
     """
         
         self.likeness_prompt = """
