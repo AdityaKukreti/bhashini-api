@@ -232,6 +232,27 @@ def initialRoute():
                 </ul>
             </div>
         </div>
+
+        <div class="card">
+            <h2>/getLikenessAndIntent</h2>
+            <div class="description">
+                <p><b>Description:</b> Analyze likeness and intent of the provided conversation.</p>
+                <p><b>Method:</b> <span class="method">POST</span></p>
+            </div>
+            <div class="argument-container">
+                <h3>Arguments:</h3>
+                <ul class="argument-list">
+                    <li class="argument-item"><b>conversation:</b> <span class="data-type">string</span></li>
+                </ul>
+            </div>
+            <div class="response-container">
+                <h3>Response:</h3>
+                <ul class="response-list">
+                    <li class="response-item"><b>Response:</b> <span class="data-type">string</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
     </div>
 </body>
 </html>
