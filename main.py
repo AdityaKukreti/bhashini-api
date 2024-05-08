@@ -227,7 +227,8 @@ def initialRoute():
             <div class="response-container">
                 <h3>Response:</h3>
                 <ul class="response-list">
-                    <li class="response-item"><b>Translations:</b> <span class="data-type">map[string]string</span></li>
+                    <li class="response-item"><b>Audios:</b> <span class="data-type">map[string]string</span></li>
+                    <li class="response-item"><b>Transcriptions:</b> <span class="data-type">map[string]string</span></li>
                     <li class="response-item"><b>Sentiment:</b> <span class="data-type">string</span></li>
                 </ul>
             </div>
