@@ -2,7 +2,7 @@ from flask import Flask,request,jsonify
 from BhashiniAPI import *
 from AudioClassifier import AudioClassifier
 from voiceToText import VoiceToText
-from LikenessAndIntent import LikenessAndIntent
+from likenessAndIntent import LikenessAndIntent
 import base64
 
 
