@@ -22,11 +22,14 @@ class LikenessAndIntent:
     - [Conclusion on whether the deal was successful (agreed upon) or unsuccessful (no agreement)]
 
     
-    Please provide a concise overview of the negotiation, not more than [300] characters, capturing the essence of the business interaction. Use a bullet format for each of the 4 aspects.
+    Please provide a concise overview of the negotiation, not more than [500] characters, capturing the essence of the business interaction. Use a bullet format for each of the 4 aspects.
     Give me the output in a python dictionary format with the value being an array of information. 
     Use double inverted commas to enclose the information.
     Avoid writing any extra text like "Here is the output in a Python dictionary format:".
     Make sure to follow python syntax and rules properly which doesn't cause any errors. Do ensure enclosing all quotation marks, braces and brackets.
+    Example:
+
+        {'Final Agreement': ['The buyer decides to purchase the XYZ Smartphone, opting for credit card payment to complete the transaction; the seller ensures a box is ready with everything needed to set up the phone.'], 'Initial Offer': ['The seller recommends the XYZ Smartphone, highlighting its impressive 48-hour battery life, excellent performance at a price point of around $450, and features like a 12-MP rear camera and HDR imaging.'], 'Notification Process': ["The buyer and seller discuss the phone's camera quality, overall performance, and customer service; the buyer is impressed with the excellent support team and one-year warranty."], 'Update Status': ['The deal was successful; thebuyerandthesellergreeontothenegotiation.Thebuyerleftwithnew XYZ Smartphone.']}
     """
         
         self.likeness_prompt = """

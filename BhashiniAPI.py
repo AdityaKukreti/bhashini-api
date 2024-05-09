@@ -248,7 +248,7 @@ class Bhashini:
         textTranslation[sourceLanguage] = text
         textToSpeech = self.voiceTranslations(textTranslation)
         
-        return textToSpeech
+        return {"audios":textToSpeech,"transcriptions":textTranslation}
 
         
 
