@@ -4,10 +4,10 @@ class AudioClassifier:
 	
     def __init__(self) -> None:
         
-        self.API_URL = "https://j5y08cvnhayftckd.us-east-1.aws.endpoints.huggingface.cloud"
+        self.API_URL = "https://we5zf1eayf3g9pwi.us-east-1.aws.endpoints.huggingface.cloud"
         self.headers = {
             "Accept" : "application/json",
-            "Authorization": "Bearer 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",
+            "Authorization": "Bearer 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",
             "Content-Type": "audio/flac" 
         }
 
